@@ -1,0 +1,216 @@
+<meta charset="utf-8" />
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.js"></script>
+
+    <title>Projeto Cadastro Pessoa</title>
+
+    <script type="text/javascript">
+        var app = angular.module("PersonManagement", []);
+
+        app.controller("PersonController", function ($scope, $http) {
+            $scope.persons = [];
+
+            $scope.personForm = {
+                id: -1,
+                nome: "",
+                cpf: "",
+                tipoLogradouro: "",
+                logradouro: "",
+                numeroLogradouro: "",
+                bairro: "",
+                cidade: "",
+                estado: "",
+                telefoneCelular: "",
+                telefoneFixo: ""
+            };
+
+            refreshPersons();
+
+            function refreshPersons() {
+                $http({
+                    method: 'GET',
+                    url: 'http://localhost:8080/rest/pessoas'
+                }).then(function successCallback(response) {
+                    $scope.persons = response.data;
+                }, function errorCallback(response) {
+                    console.log(response.statusText);
+                });
+            }
+
+            $scope.submitPerson = function () {
+                $http({
+                    method: "POST",
+                    url: 'http://localhost:8080/rest/pessoa/save/',
+                    data: angular.toJson($scope.personForm),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(processSuccess, processError);
+            };
+
+            $scope.deletePerson = function (person) {
+                $http({
+                    method: 'DELETE',
+                    url: 'http://localhost:8080/rest/pessoa/remove/' + person.id
+                }).then(processSuccess, processError);
+            };
+
+            $scope.editPerson = function (id) {
+                $http({
+                    method: 'GET',
+                    url: 'http://localhost:8080/rest/pessoa/' + id
+                }).then(function successCallback(response) {
+                    var person = response.data;
+                    
+                    $scope.personForm.id = person.id;
+                    $scope.personForm.nome = person.nome;
+                    $scope.personForm.cpf = person.cpf;
+                    $scope.personForm.tipoLogradouro = person.tipoLogradouro;
+                    $scope.personForm.logradouro = person.logradouro;
+                    $scope.personForm.numeroLogradouro = person.numeroLogradouro;
+                    $scope.personForm.bairro = person.bairro;
+                    $scope.personForm.cidade = person.cidade;
+                    $scope.personForm.estado = person.estado;
+                    $scope.personForm.telefoneCelular = person.telefoneCelular;
+                    $scope.personForm.telefoneFixo = person.telefoneFixo;
+                }, function errorCallback(response) {
+                    console.log(response.statusText);
+                });
+            }
+
+            function processSuccess(response) {
+                refreshPersons();
+                clearFormData()
+            }
+
+            function processError(response) {
+                console.log(response.statusText);
+            }
+
+            function clearFormData() {
+                $scope.personForm.id = -1;
+                $scope.personForm.nome = "";
+                $scope.personForm.cpf = "";
+                $scope.personForm.tipoLogradouro = "";
+                $scope.personForm.logradouro = "";
+                $scope.personForm.numeroLogradouro = "";
+                $scope.personForm.bairro = "";
+                $scope.personForm.cidade = "";
+                $scope.personForm.estado = "";
+                $scope.personForm.telefoneCelular = "";
+                $scope.personForm.telefoneFixo = "";
+            };
+        });
+    </script>
+
+    <head>
+
+    <body ng-app="PersonManagement" ng-controller="PersonController">
+        <form ng-submit="submitPerson()">
+            <table border="1">
+                <tr>
+                    <td>Nome</td>
+                    <td>
+                        <input type="text" ng-model="personForm.nome"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>CPF</td>
+                    <td
+                    ><input type="text" ng-model="personForm.cpf"/>
+                </td>
+                </tr>
+                <tr>
+                    <td>Tipo Logradouro (Rua, Avenida)</td>
+                    <td>
+                        <input type="text" ng-model="personForm.tipoLogradouro"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Logradouro</td>
+                    <td>
+                        <input type="text" ng-model="personForm.logradouro"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Numero</td>
+                    <td>
+                        <input type="text" ng-model="personForm.numeroLogradouro"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Bairro</td>
+                    <td>
+                        <input type="text" ng-model="personForm.bairro"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Cidade</td>
+                    <td>
+                        <input type="text" ng-model="personForm.cidade"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Estado</td>
+                    <td>
+                        <input type="text" ng-model="personForm.estado"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Telefone Celular</td>
+                    <td>
+                        <input type="text" ng-model="personForm.telefoneCelular"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Telefone Fixo</td>
+                    <td>
+                        <input type="text" ng-model="personForm.telefoneFixo"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <input type="submit" value="Salvar"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+
+        <table border="1">
+            <tr>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>Tipo Logradouro</th>
+                <th>Logradouro</th>
+                <th>Numero</th>
+                <th>Bairro</th>
+                <th>Cidade</th>
+                <th>Estado</th>
+                <th>Telefone Celular</th>
+                <th>Telefone Fixo</th>
+                <th>Operação</th>
+            </tr>
+
+            <tr ng-repeat="person in persons">
+                <td>{{person.nome}}</td>
+                <td>{{person.cpf}}</td>
+                <td>{{person.tipoLogradouro}}</td>
+                <td>{{person.logradouro}}</td>
+                <td>{{person.numeroLogradouro}}</td>
+                <td>{{person.bairro}}</td>
+                <td>{{person.cidade}}</td>
+                <td>{{person.estado}}</td>
+                <td>{{person.telefoneCelular}}</td>
+                <td>{{person.telefoneFixo}}</td>
+                <td>
+                    <a ng-click="editPerson(person.id)">Selecionar</a>
+                    <a ng-click="deletePerson(person)">Remover</a>
+                </td>
+            </tr>
+        </table>
+    </body>
+</head>
+
+</html>
