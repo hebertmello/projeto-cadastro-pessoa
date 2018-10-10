@@ -11,6 +11,12 @@ import br.com.hfdm.projetocadastropessoa.entity.Person;
  */
 public interface PersonRepository extends JpaRepository<Person, Long> {
 
-	//
+	/**
+	 * Método Responsável por Recuperar uma Pessoa pelo Nome.
+	 * 
+	 * @param nome
+	 * @return
+	 */
+	Person findByNome(final String nome);
 
 }

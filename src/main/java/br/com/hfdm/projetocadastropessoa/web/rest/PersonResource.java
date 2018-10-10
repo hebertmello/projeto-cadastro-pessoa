@@ -61,6 +61,12 @@ public class PersonResource {
 	@PostMapping("/pessoa/save")
 	public ResponseEntity<Person> save(@RequestBody final Person person) {
 		if(person.getId().equals(-1L)) {
+			final Person personWithSameName = personService.findByNome(person.getNome());
+
+			if(personWithSameName != null) {
+				return ResponseEntity.badRequest().build();
+			}
+
 			// Inclusão de uma Pessoa
 			person.setId(null);
 		}

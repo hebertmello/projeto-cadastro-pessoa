@@ -61,4 +61,15 @@ public class PersonService {
 		personRepository.deleteById(id);
 	}
 
+	/**
+	 * Método Responsável por Recuperar uma Pessoa pelo Nome.
+	 *
+	 * @param name
+	 * @return
+	 */
+	@Transactional(readOnly = true)
+	public Person findByNome(final String name) {
+		return personRepository.findByNome(name);
+	}
+
 }

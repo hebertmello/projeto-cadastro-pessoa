@@ -86,7 +86,7 @@
             }
 
             function processError(response) {
-                console.log(response.statusText);
+                console.log(response.status);
             }
 
             function clearFormData() {
@@ -180,6 +180,7 @@
 
         <table border="1">
             <tr>
+            	<th>&nbsp;</th>
                 <th>Nome</th>
                 <th>CPF</th>
                 <th>Tipo Logradouro</th>
@@ -190,10 +191,13 @@
                 <th>Estado</th>
                 <th>Telefone Celular</th>
                 <th>Telefone Fixo</th>
-                <th>Operação</th>
+                <th>&nbsp;</th>
             </tr>
 
             <tr ng-repeat="person in persons">
+                <td>
+                    <a ng-click="editPerson(person.id)">Selecionar</a>
+                </td>
                 <td>{{person.nome}}</td>
                 <td>{{person.cpf}}</td>
                 <td>{{person.tipoLogradouro}}</td>
@@ -205,7 +209,6 @@
                 <td>{{person.telefoneCelular}}</td>
                 <td>{{person.telefoneFixo}}</td>
                 <td>
-                    <a ng-click="editPerson(person.id)">Selecionar</a>
                     <a ng-click="deletePerson(person)">Remover</a>
                 </td>
             </tr>
